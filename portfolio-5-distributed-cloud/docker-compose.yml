@@ -1,0 +1,38 @@
+# Portfolio 5: a three node MongoDB replica set (one primary, two secondaries)
+#
+# Start:   docker compose up -d
+# Then:    run the commands in README.md to start the replica set and test failover.
+
+services:
+  mongo1:
+    image: mongo:7
+    container_name: mongo1
+    command: ["--replSet", "kpayrs", "--bind_ip_all", "--port", "27017"]
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo1_data:/data/db
+      - ../portfolio-4-nosql:/scripts:ro
+
+  mongo2:
+    image: mongo:7
+    container_name: mongo2
+    command: ["--replSet", "kpayrs", "--bind_ip_all", "--port", "27017"]
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo2_data:/data/db
+
+  mongo3:
+    image: mongo:7
+    container_name: mongo3
+    command: ["--replSet", "kpayrs", "--bind_ip_all", "--port", "27017"]
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongo3_data:/data/db
+
+volumes:
+  mongo1_data:
+  mongo2_data:
+  mongo3_data:
