@@ -2,7 +2,7 @@
 
 ## Case study: KPay Wallet
 
-KPay Wallet is a simulated digital wallet and money transfer platform for Nigerian users. It is not a real company. I chose it because money movement forces careful design: balances must never go negative, transfers must be recorded exactly, and every change must be traceable.
+KPay Wallet is a fictional digital wallet and money transfer service for Nigerian users. Customers open wallet accounts in naira (NGN) or US dollars (USD) and send money to each other. I picked it because money forces you to be careful. A balance must never drop below zero, and every transfer has to be recorded exactly so it can be traced later. The database would be used by customers on a mobile app, by support staff who handle complaints, and by auditors who check balances. The main data is customers, accounts, transfers and an audit log. The key operations are opening an account, sending money, checking a balance and reviewing the audit history.
 
 **Users of the database:** customers (through a mobile app), customer support staff, and auditors who check balances.
 
