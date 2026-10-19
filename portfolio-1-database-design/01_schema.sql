@@ -52,7 +52,7 @@ CREATE TABLE audit_log (
     logged_at     TIMESTAMP    NOT NULL DEFAULT NOW()
 );
 
--- Show the result so you can screenshot it.
+-- Show the tables so I can screenshot them.
 \d customers
 \d accounts
 \d transfers
