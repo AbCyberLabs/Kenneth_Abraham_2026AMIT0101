@@ -1,6 +1,6 @@
 -- Portfolio 1 and 2: sample data
 -- Generates a realistic volume so query speed differences become visible.
--- 20,000 customers, about 30,000 accounts, 300,000 transfers.
+-- 20,000 customers, 26,666 accounts, 300,000 transfers.
 --
 -- Run with:  psql -U postgres -d kpay -f 02_seed_data.sql
 
