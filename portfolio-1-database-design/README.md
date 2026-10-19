@@ -18,6 +18,10 @@ KPay Wallet is a fictional digital wallet and money transfer service for Nigeria
 | `02_seed_data.sql` | Fills them with 20,000 customers, 26,666 accounts and 300,000 transfers |
 | `er_diagram.png` | Entity relationship diagram |
 
+## ER diagram
+
+![ER diagram](er_diagram.png)
+
 ## How to run
 
 ```
