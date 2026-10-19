@@ -59,6 +59,8 @@ I kept the audit log in a separate table so the system can keep track of changes
 
 All pictures are in the screenshots folder.
 
+The ER diagram is er_diagram.png in the Portfolio 1 folder, and the numbered screenshots start at p1_02.
+
 | File | What it shows |
 |---|---|
 | `p1_02_customers_table.png` | The customers table. customer_id is the primary key, email and phone are UNIQUE, and accounts points back to it with ON DELETE RESTRICT. |
