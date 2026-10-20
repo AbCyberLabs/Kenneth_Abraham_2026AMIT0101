@@ -21,15 +21,28 @@ It runs four queries. For the first three it shows the plan before and after add
 
 ## Results from my own run
 
-Fill this table with YOUR numbers from YOUR machine. Times differ between computers.
+Measured on 11 October 2026, PostgreSQL 16.15 on Windows. Times differ between computers.
 
 | Query | Before (ms) | After (ms) | Plan before | Plan after |
 |---|---|---|---|---|
-| Q1 | | | | |
-| Q2 | | | | |
-| Q3 | | | | |
+| Q1 | 75.237 | 0.122 | Parallel Seq Scan | Bitmap Index Scan |
+| Q2 | 210.859 | 170.380 | Seq Scans, Hash Joins | Same plan, index unused |
+| Q3 | 89.303 | 0.220 | Parallel Seq Scan | Index Only Scan |
 
-For reference, the preparation run on a test server gave roughly 17 ms to 0.1 ms for Q1, 24 ms to 1.3 ms for Q3, and no real change for Q2. Do not copy these. Use your own.
+Q3 uses NOW(), so its count changes with the date. It was 789 on 11 October 2026.
+
+## Screenshots
+
+| File | What it shows |
+|---|---|
+| p2_01_q1_before.png | Q1 before the index: Parallel Seq Scan, 75.237 ms |
+| p2_02_q1_after.png | Q1 after the index: Bitmap Index Scan, 0.122 ms |
+| p2_03_q2_before.png | Q2 before: three tables joined, 210.859 ms |
+| p2_04_q2_after.png | Q2 after: same plan, index not used, 170.380 ms |
+| p2_05_q3_before.png | Q3 before: Parallel Seq Scan, 89.303 ms |
+| p2_06_q3_after.png | Q3 after: Index Only Scan, 0.220 ms |
+| p2_07_q4_result.png | Q4 running total, 9 rows, last total 295933.31 |
+| p2_08_index_sizes.png | Size of every index on transfers and accounts |
 
 ## How to read an execution plan
 
