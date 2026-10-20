@@ -56,6 +56,8 @@ Q3 uses NOW(), so its count changes with the date. It was 789 on 11 October 2026
 ### 1. Why did Q1 get so much faster?
 Before the index was added, PostgreSQL had to scan all 300,000 rows in the transfers table using a Parallel Seq Scan to find transfers belonging to account 4521[cite: 48]. This operation took 75.237 ms and evaluated 3,188 shared memory blocks[cite: 48]. After creating the composite index on `(from_account, created_at DESC)`, the planner switched to a Bitmap Index Scan[cite: 48]. It jumped directly to the 15 matching records, reading only 18 blocks while completely skipping the other 299,985 rows, reducing execution time to 0.122 ms (over 600 times faster)[cite: 48].
 
-2. Why did Q2 barely change? (It reads more than half the table, so a full scan is the cheapest plan.)
+### 2. Why did Q2 barely change?
+Query 2 aggregates total transfer amounts grouped by city for all successful transactions, requiring the database to process around 171,000 of the 300,000 rows in the transfers table (over 70% of the records) alongside the accounts and customers tables. When a query reads such a large portion of a table, a sequential scan reading contiguous disk blocks is far more efficient than making tens of thousands of random index block lookups[cite: 34, 48]. Consequently, PostgreSQL ignored the new index on `accounts(customer_id)` and retained the original `Parallel Seq Scan` and `Hash Join` plan[cite: 34, 35, 48]. Although the recorded time moved from 210.859 ms to 170.380 ms, subsequent test runs produced times of 169.417 ms, 206.493 ms, and 175.893 ms, confirming that this gap is merely normal system run-to-run variation rather than an indexing improvement[cite: 42, 46, 48].
+
 3. What does an index cost? Look at the index size query at the bottom of the script. Indexes use disk space and slow down inserts and updates.
 4. Why is the Q3 partial index so small?
