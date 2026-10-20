@@ -51,9 +51,11 @@ Q3 uses NOW(), so its count changes with the date. It was 789 on 11 October 2026
 - **actual time** is how long that step took. **rows** is how many rows it returned.
 - **Execution Time** at the bottom is the total.
 
-## Analysis to write (3 to 5 sentences each, in your words)
+## Analysis
 
-1. Why did Q1 get so much faster? (The database no longer reads 300,000 rows to find about 15.)
+### 1. Why did Q1 get so much faster?
+Before the index was added, PostgreSQL had to scan all 300,000 rows in the transfers table using a Parallel Seq Scan to find transfers belonging to account 4521[cite: 48]. This operation took 75.237 ms and evaluated 3,188 shared memory blocks[cite: 48]. After creating the composite index on `(from_account, created_at DESC)`, the planner switched to a Bitmap Index Scan[cite: 48]. It jumped directly to the 15 matching records, reading only 18 blocks while completely skipping the other 299,985 rows, reducing execution time to 0.122 ms (over 600 times faster)[cite: 48].
+
 2. Why did Q2 barely change? (It reads more than half the table, so a full scan is the cheapest plan.)
 3. What does an index cost? Look at the index size query at the bottom of the script. Indexes use disk space and slow down inserts and updates.
 4. Why is the Q3 partial index so small?
