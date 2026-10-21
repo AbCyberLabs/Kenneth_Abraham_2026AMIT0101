@@ -92,6 +92,14 @@ SELECT ... FOR UPDATE locks the rows returned by the query. Session A executed t
 
 ### 3. What did the isolation level experiment show?
 
+READ COMMITTED is PostgreSQL's default isolation level, where each statement within a transaction sees whatever data has been committed up to that moment. In Experiment 3a, Session A read a balance of 80,000, then Session B updated and committed the balance to 90,000, causing Session A's second query within the same transaction to return 90,000 (a non-repeatable read). Under REPEATABLE READ in Experiment 3b, Session A maintained a consistent snapshot of the database established by its first query. Even after Session B committed a balance change to 95,000, Session A continued reading 90,000 until its own transaction committed, proving that REPEATABLE READ isolates the transaction from concurrent external updates.
+
+
 ### 4. What happened in the deadlock, and why does a fixed lock order prevent it?
 
+In Experiment 4, Session A updated account 1 while Session B updated account 2, giving each session an exclusive row lock on one account. When Session A subsequently requested account 2 and Session B requested account 1, both sessions became stuck waiting for a lock held by the other. After its default 1-second deadlock timeout, PostgreSQL detected the circular dependency and aborted Session B with `ERROR: deadlock detected`, allowing Session A to finish its second update. Enforcing a fixed lock order (always locking the smaller account ID first) prevents deadlocks because all competing transactions request resources in the exact same sequence, eliminating circular waiting loops entirely.
+
+
 ### 5. How do the results link to ACID?
+
+Atomicity was demonstrated during the failed transaction test, where step 1 credited 999,999 to account 2, but step 2 violated the balance constraint on account 1. PostgreSQL aborted the entire transaction and reverted step 1, guaranteeing all-or-nothing execution. Consistency was maintained by database CHECK constraints (`accounts_balance_check`), which prevented account balances from dropping below zero (blocking a failing state of -919,999). Isolation was proven across Experiments 1 through 3, showing how uncoordinated updates lead to lost data, how row-level locking enforces sequential execution, and how isolation levels control data visibility. Durability guarantees that committed data survives system crashes by recording transactions to disk write-ahead logs (WAL); while a crash test was not explicitly performed, durability applies to all committed transfers.
