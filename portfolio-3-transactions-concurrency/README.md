@@ -73,12 +73,6 @@ All files are in the screenshots folder.
 | `p3_12_deadlock.png` | Experiment 4: ERROR: deadlock detected in Session B |
 | `p3_13_after_deadlock.png` | Experiment 4: after ROLLBACK, 95000.00 and 70500.00 |
 
-## ACID in one line each (to use in your write up)
-
-- **Atomicity:** all steps of a transaction happen or none do.
-- **Consistency:** the rules (constraints) are never broken by a committed transaction.
-- **Isolation:** transactions running together do not see each other's half finished work, to a degree set by the isolation level.
-- **Durability:** once committed, the data survives a crash.
 
 ## Analysis
 
