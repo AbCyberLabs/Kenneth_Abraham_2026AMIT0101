@@ -11,7 +11,8 @@ DROP INDEX IF EXISTS idx_transfers_from_created;
 DROP INDEX IF EXISTS idx_transfers_status_created;
 DROP INDEX IF EXISTS idx_customers_city;
 DROP INDEX IF EXISTS idx_accounts_customer;
-ANALYZE;
+DROP INDEX IF EXISTS idx_transfers_failed_recent;
+ANALYZE; 
 
 ----------------------------------------------------------------------
 -- Q1. Statement history for one account (most recent first)
