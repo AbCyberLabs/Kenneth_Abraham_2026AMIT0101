@@ -84,7 +84,11 @@ All files are in the screenshots folder.
 
 ### 1. Why did the lost update happen in Experiment 1?
 
+Both sessions read the initial account balance of 80,000 before either transaction saved its changes. Session A subtracted 10,000 and committed a balance of 70,000. However, Session B was still operating on the original 80,000 reading, so it subtracted 5,000 and committed a final balance of 75,000 directly over Session A's update. PostgreSQL raised no error because each individual UPDATE statement satisfied all database constraints, but Session A's 10,000 withdrawal was silently lost. This problem occurs when an application reads data, calculates a change locally, and writes it back without locking the row to prevent concurrent modifications.
+
 ### 2. What exactly did FOR UPDATE make Session B do?
+
+SELECT ... FOR UPDATE locks the rows returned by the query. Session A executed the statement first and acquired an exclusive row lock on account 1, forcing Session B to pause and wait when it attempted to execute the same statement. Once Session A committed its transaction and released the lock, Session B resumed execution, reading the newly committed balance of 70,000 instead of the original 80,000. Session B then subtracted 5,000 to save the correct final balance of 65,000. The row lock ensured the two transactions executed sequentially rather than concurrently.
 
 ### 3. What did the isolation level experiment show?
 
