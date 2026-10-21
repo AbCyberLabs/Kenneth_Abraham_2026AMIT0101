@@ -84,15 +84,29 @@ All files are in the screenshots folder.
 
 ### 1. How does the document model differ from my SQL tables, and what did I embed?
 
+In the SQL schema, retrieving a single wallet view required joining records across `customers`, `accounts`, and `transfers` tables. In contrast, MongoDB encapsulates Ada Obi's profile details, her NGN and USD accounts, her two recent transfers, and her verification tags inside a single document within the `wallets` collection, enabling `findOne` to retrieve the entire wallet state in one read operation. Only recent transfers are embedded inside the document to respect MongoDB's strict 16 MB document size boundary, ensuring active wallets do not exceed storage limits over years of activity; historical transfer archives remain safely stored in PostgreSQL.
+
 ### 2. What did the queries and the update show?
+
+Targeted find operations verified document filtering: an email lookup retrieved Ada Obi in Lagos, an `$in` query filtered customers in Lagos or Kano (Ada Obi and Zainab Musa), and dot-notation query `"recentTransfers.status": "FAILED"` inspected embedded sub-documents to identify Chidi Eze. The array update utilized the positional `$` operator (`"accounts.$.balance"`) to target only the NGN account item without modifying the USD account, successfully updating Ada's NGN balance from 80,000 to 81,000 while leaving her USD balance unchanged at 450 (`matchedCount: 1`, `modifiedCount: 1`).
+
+The aggregation pipelines demonstrated complex data processing: the first pipeline used `$unwind` on account arrays, filtered for NGN currency via `$match`, and grouped by city to report NGN totals of Kano (152,000), Lagos (81,000), and Owerri (70,000). The second pipeline filtered embedded transfers for `SUCCESS` status and summed outgoing money per sender, returning Ada Obi with 21,500 (combining 20,000 and 1,500) while intentionally excluding Chidi Eze's 500 failed attempt.
 
 ### 3. What did the index change, and what did the unique index do?
 
+Execution plan analysis on `email` lookups highlighted the efficiency gain of indexing. Prior to index creation, searching for `ada@example.com` triggered a full collection scan (`COLLSCAN`) that evaluated all 3 documents in the collection (`keysExamined: 0`, `docsExamined: 3`). After building a unique index on `email`, the plan transitioned to an index scan (`IXSCAN`) wrapped in a `FETCH` stage, bringing work counts down to `keysExamined: 1` and `docsExamined: 1`. While the performance delta on 3 documents is negligible, index lookups scale logarithmically rather than linearly as data volume expands. Furthermore, attempting to insert a second wallet with `ada@example.com` triggered an `E11000 duplicate key error` on index `email_1`, confirming that unique indexes enforce key constraints equivalent to SQL `UNIQUE` rules.
+
 ### 4. What does the TTL index do?
+
+The `sessions` collection demonstrates key-value document patterns and automated data retention. A session document (`sess_8f3a21`) was written with an `expiresAt` timestamp set 60 seconds into the future, coupled with a TTL index on `expiresAt` configured with `expireAfterSeconds: 0`. Upon querying the session after the expiration window passed, `findOne` returned `null`, confirming that MongoDB's background thread automatically removed the expired document without explicit delete operations.
 
 ### 5. Where does MongoDB suit KPay, and where does it not?
 
+MongoDB excels in managing entity data that benefits from single-read access patterns or flexible structures, such as customer profile management, verification status tags, and self-expiring authentication sessions. However, core fund transfers demand strict transactional integrity. Moving funds between accounts requires updating two balances atomically, a requirement tested and proven under PostgreSQL row-level locks and ACID guarantees in Portfolio 3. Furthermore, relational SQL structures remain better suited for multi-table financial reporting and unbounded ledger records that cannot fit within MongoDB's 16 MB document limit. Consequently, KPay is best architected using polyglot persistence: PostgreSQL handles core transactional balances and ledger records, while MongoDB handles user profiles, tags, and session management.
+
 ### 6. What I did not test
+
+This test suite focused on core features using 3 sample wallet documents on a local node, serving as a functional evaluation rather than a high-throughput load benchmark. Performance measurements were evaluated in terms of documents examined rather than query execution latency in milliseconds. Additionally, multi-document ACID transactions across replica set nodes were not evaluated in this environment.
 
 ## State of the database after my run
 
