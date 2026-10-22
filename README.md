@@ -1,12 +1,22 @@
 # MIT 8103 Advanced Database Systems: Portfolio
 
 Student: Kenneth Abraham
-Programme: Master of Information Technology, Miva Open University
+
+Student ID: 2026/A/MIT/0101
+
+Programme: Master of Information Technology
+
 Session: 2026/2027, first semester
 
 ## Case study
 
-KPay Wallet, a simulated digital wallet and money transfer platform. All five portfolio activities use this one case study.
+KPay Wallet is a fictional digital wallet and money transfer service for Nigerian users. Customers open wallet accounts in naira (NGN) or US dollars (USD) and send money to each other. All five portfolio activities use this one case study.
+
+**Users of the database:** customers (through a mobile app), customer support staff, and auditors who check balances.
+
+**Major data stored:** customer details, wallet accounts in NGN and USD, transfers between accounts, and an audit log of balance changes.
+
+**Key operations:** open an account, send money between accounts, view a statement, reverse a failed transfer, and audit balance changes.
 
 ## Repository layout
 
