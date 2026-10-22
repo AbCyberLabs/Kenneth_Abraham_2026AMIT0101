@@ -6,7 +6,7 @@ This part models the KPay Wallet in MongoDB. In PostgreSQL a wallet needed three
 
 | File | What it is |
 |---|---|
-| mongo_kpay.js | The starter script with the data and the queries |
+| mongo_kpay.js | The starter script with the data and the queries. I ran it as it is, with the four changes listed in "What I changed from mongo_kpay.js" below |
 | screenshots | Ten pictures from my own run, p4_01 to p4_10 |
 | README.md | This file |
 
@@ -106,7 +106,7 @@ MongoDB excels in managing entity data that benefits from single-read access pat
 
 ### 6. What I did not test
 
-This test suite focused on core features using 3 sample wallet documents on a local node, serving as a functional evaluation rather than a high-throughput load benchmark. Performance measurements were evaluated in terms of documents examined rather than query execution latency in milliseconds. Additionally, multi-document ACID transactions across replica set nodes were not evaluated in this environment.
+This test used 3 sample wallet documents on a local Docker replica set, so it shows how each feature works and not how MongoDB behaves with a large amount of data. I measured how many documents each query read, not how long it took in milliseconds. I also did not test multi document transactions across the replica set, so I can't say how MongoDB would handle moving money between two wallets.
 
 ## State of the database after my run
 
