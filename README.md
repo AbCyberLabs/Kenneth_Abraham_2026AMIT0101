@@ -34,6 +34,8 @@ KPay Wallet is a fictional digital wallet and money transfer service for Nigeria
 2. Run the scripts in `portfolio-1-database-design`, then 2, then 3, in the order given in each README.
 3. Install Docker Desktop and follow `portfolio-4-nosql` and `portfolio-5-distributed-cloud`.
 
+Notes: 01_schema.sql drops and recreates the four tables, so run it on an empty kpay database. The seed data uses random values, so amounts, the Query 4 running total and timings will differ slightly from my screenshots. The row counts (20000, 26666 and 300000) and the plan types should stay the same, and the Query 3 count depends on the date. Portfolio 5 needs Docker Desktop and free ports 27017 to 27019.
+
 ## Evidence
 
 Screenshots are saved in the `screenshots` folder inside each portfolio folder.
